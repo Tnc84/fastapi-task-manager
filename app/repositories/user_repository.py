@@ -17,19 +17,19 @@ class UserRepository:
     def __init__(self, db: Session):
         self.db = db
     
-    async def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+    def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
         """Get all users with pagination"""
         return self.db.query(User).offset(skip).limit(limit).all()
     
-    async def get_user(self, user_id: int) -> Optional[User]:
+    def get_user(self, user_id: int) -> Optional[User]:
         """Get user by ID"""
         return self.db.query(User).filter(User.id == user_id).first()
     
-    async def get_user_by_email(self, email: str) -> Optional[User]:
+    def get_user_by_email(self, email: str) -> Optional[User]:
         """Get user by email"""
         return self.db.query(User).filter(User.email == email).first()
     
-    async def create_user(self, user: UserCreate) -> User:
+    def create_user(self, user: UserCreate) -> User:
         """Create a new user"""
         hashed_password = get_password_hash(user.password)
         db_user = User(
@@ -44,9 +44,9 @@ class UserRepository:
         self.db.refresh(db_user)
         return db_user
     
-    async def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
+    def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
         """Update an existing user"""
-        db_user = await self.get_user(user_id)
+        db_user = self.get_user(user_id)
         if not db_user:
             return None
         
@@ -61,9 +61,9 @@ class UserRepository:
         self.db.refresh(db_user)
         return db_user
     
-    async def delete_user(self, user_id: int) -> bool:
+    def delete_user(self, user_id: int) -> bool:
         """Delete a user"""
-        db_user = await self.get_user(user_id)
+        db_user = self.get_user(user_id)
         if not db_user:
             return False
         

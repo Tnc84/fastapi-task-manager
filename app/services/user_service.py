@@ -17,26 +17,26 @@ class UserService:
         self.db = db
         self.user_repository = UserRepository(db)
     
-    async def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+    def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
         """Get all users with pagination"""
-        return await self.user_repository.get_users(skip=skip, limit=limit)
+        return self.user_repository.get_users(skip=skip, limit=limit)
     
-    async def get_user(self, user_id: int) -> Optional[User]:
+    def get_user(self, user_id: int) -> Optional[User]:
         """Get user by ID"""
-        return await self.user_repository.get_user(user_id)
+        return self.user_repository.get_user(user_id)
     
-    async def get_user_by_email(self, email: str) -> Optional[User]:
+    def get_user_by_email(self, email: str) -> Optional[User]:
         """Get user by email"""
-        return await self.user_repository.get_user_by_email(email)
+        return self.user_repository.get_user_by_email(email)
     
-    async def create_user(self, user: UserCreate) -> User:
+    def create_user(self, user: UserCreate) -> User:
         """Create a new user"""
-        return await self.user_repository.create_user(user)
+        return self.user_repository.create_user(user)
     
-    async def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
+    def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
         """Update an existing user"""
-        return await self.user_repository.update_user(user_id, user_update)
+        return self.user_repository.update_user(user_id, user_update)
     
-    async def delete_user(self, user_id: int) -> bool:
+    def delete_user(self, user_id: int) -> bool:
         """Delete a user"""
-        return await self.user_repository.delete_user(user_id)
+        return self.user_repository.delete_user(user_id)

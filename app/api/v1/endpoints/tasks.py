@@ -14,24 +14,24 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[Task])
-async def get_tasks(
+def get_tasks(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
     """Get all tasks with pagination"""
     task_service = TaskService(db)
-    return await task_service.get_tasks(skip=skip, limit=limit)
+    return task_service.get_tasks(skip=skip, limit=limit)
 
 
 @router.get("/{task_id}", response_model=Task)
-async def get_task(
+def get_task(
     task_id: int,
     db: Session = Depends(get_db)
 ):
     """Get a specific task by ID"""
     task_service = TaskService(db)
-    task = await task_service.get_task(task_id)
+    task = task_service.get_task(task_id)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -41,24 +41,24 @@ async def get_task(
 
 
 @router.post("/", response_model=Task, status_code=status.HTTP_201_CREATED)
-async def create_task(
+def create_task(
     task: TaskCreate,
     db: Session = Depends(get_db)
 ):
     """Create a new task"""
     task_service = TaskService(db)
-    return await task_service.create_task(task)
+    return task_service.create_task(task)
 
 
 @router.put("/{task_id}", response_model=Task)
-async def update_task(
+def update_task(
     task_id: int,
     task_update: TaskUpdate,
     db: Session = Depends(get_db)
 ):
     """Update an existing task"""
     task_service = TaskService(db)
-    task = await task_service.update_task(task_id, task_update)
+    task = task_service.update_task(task_id, task_update)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -68,13 +68,13 @@ async def update_task(
 
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_task(
+def delete_task(
     task_id: int,
     db: Session = Depends(get_db)
 ):
     """Delete a task"""
     task_service = TaskService(db)
-    success = await task_service.delete_task(task_id)
+    success = task_service.delete_task(task_id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -22,7 +22,10 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     
     # Database settings
-    DATABASE_URL: str = "sqlite:///./task_manager.db"
+    # Default to PostgreSQL - override in .env file
+    # For development: postgresql://postgres:postgres@localhost:5432/taskmanager
+    # For SQLite fallback: sqlite:///./taskmanager.db
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/taskmanager"
     
     # Security settings
     SECRET_KEY: str = "your-secret-key-change-in-production"
@@ -44,13 +47,20 @@ class Settings(BaseSettings):
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """Parse CORS origins from various input formats"""
         if isinstance(v, str):
+            if not v:
+                # Empty string, return default list
+                return [
+                    "http://localhost:3000",
+                    "http://localhost:4200",
+                    "http://localhost:8080"
+                ]
             if v.startswith("["):
                 # It's a JSON string, parse it
                 import json
                 return json.loads(v)
             else:
                 # It's a comma-separated string
-                return [i.strip() for i in v.split(",")]
+                return [i.strip() for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
             return v
         return v

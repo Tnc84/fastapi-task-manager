@@ -5,7 +5,18 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $WshShell = New-Object -comObject WScript.Shell
 $ShortcutPath = "$Home\Desktop\Task Manager.lnk"
 $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
-$Shortcut.TargetPath = "$ScriptDir\TaskManager.bat"
+
+# Use silent launcher if available, otherwise use batch file
+$SilentLauncher = "$ScriptDir\TaskManager-Silent.vbs"
+if (Test-Path $SilentLauncher) {
+    $Shortcut.TargetPath = "wscript.exe"
+    $Shortcut.Arguments = "`"$SilentLauncher`""
+    Write-Host "✅ Using silent launcher (no console window)" -ForegroundColor Green
+} else {
+    $Shortcut.TargetPath = "$ScriptDir\TaskManager.bat"
+    Write-Host "Using batch file launcher" -ForegroundColor Yellow
+}
+
 $Shortcut.WorkingDirectory = "$ScriptDir"
 $Shortcut.Description = "Task Manager Desktop Application"
 

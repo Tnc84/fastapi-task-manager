@@ -12,12 +12,14 @@ import threading
 import multiprocessing
 from pathlib import Path
 
-# Configure logging
+# Configure logging - only show warnings and errors from libraries
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.WARNING,
+    format='%(message)s'
 )
+# But keep INFO level for our own app logger
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def is_port_in_use(port: int) -> bool:
@@ -33,13 +35,13 @@ def start_backend_server():
     """
     try:
         import uvicorn
-        logger.info("Starting FastAPI backend server...")
         
+        # Suppress uvicorn startup logs
         uvicorn.run(
             "app.main:app",
             host="127.0.0.1",
             port=8000,
-            log_level="warning",  # Less verbose
+            log_level="error",  # Only show errors
             access_log=False
         )
     except Exception as e:
@@ -52,15 +54,16 @@ def wait_for_server(max_attempts=30):
     Wait for the backend server to be ready
     Returns True if server is ready, False otherwise
     """
-    logger.info("Waiting for backend server to start...")
+    print("⏳ Starting backend server...", end="", flush=True)
     
     for attempt in range(max_attempts):
         if is_port_in_use(8000):
-            logger.info("✅ Backend server is ready!")
+            print(" ✅")
             return True
         time.sleep(0.5)
     
-    logger.error("❌ Backend server failed to start")
+    print(" ❌ Failed!")
+    logger.error("Backend server failed to start")
     return False
 
 
@@ -77,13 +80,9 @@ def check_frontend_exists():
     
     for path in frontend_paths:
         if path.exists():
-            logger.info(f"✅ Frontend found at: {path.parent}")
             return True
     
-    logger.warning("⚠️  Frontend not built!")
-    logger.warning("   Please build Angular first:")
-    logger.warning("   1. cd D:\\Angular\\task-manager-portal")
-    logger.warning("   2. ng build --configuration production")
+    print("⚠️  Frontend not built - API only mode")
     return False
 
 
@@ -99,15 +98,10 @@ def create_native_window():
         input("\nPress Enter to exit...")
         sys.exit(1)
     
-    logger.info("Creating native desktop window...")
-    
     # Check if custom icon exists
     icon_path = Path(__file__).parent / "taskmanager.ico"
     if not icon_path.exists():
-        logger.warning("⚠️  Custom icon not found. Run: python create_icon.py")
         icon_path = None
-    else:
-        logger.info(f"✅ Using custom icon: {icon_path}")
     
     # Create the window (icon will be set in webview.start())
     window = webview.create_window(
@@ -122,12 +116,10 @@ def create_native_window():
         text_select=True
     )
     
-    logger.info("✅ Desktop window created!")
-    logger.info("\n" + "=" * 50)
-    logger.info("🚀 Task Manager is running!")
-    logger.info("=" * 50)
-    logger.info("Close the window to exit the application")
-    logger.info("=" * 50 + "\n")
+    print("\n" + "=" * 50)
+    print("🚀 Task Manager is running!")
+    print("=" * 50)
+    print("Close the window to exit the application\n")
     
     # Start the GUI event loop (blocking) with icon
     if icon_path:
@@ -145,19 +137,16 @@ def main():
     print("=" * 50 + "\n")
     
     # Check if frontend is built
-    if not check_frontend_exists():
-        logger.warning("\n⚠️  Running without frontend (API only)")
-        logger.warning("   You'll see API docs instead of the app UI\n")
+    check_frontend_exists()
     
     # Check if backend is already running
     if is_port_in_use(8000):
-        logger.info("Backend server already running on port 8000")
-        logger.info("Opening desktop window...\n")
+        print("⚠️  Backend already running on port 8000")
+        print("📱 Opening window...\n")
         create_native_window()
         return
     
     # Start backend server in separate process
-    logger.info("Starting backend server in background...\n")
     server_process = multiprocessing.Process(target=start_backend_server, daemon=True)
     server_process.start()
     
@@ -174,16 +163,16 @@ def main():
         # Create and show native window
         create_native_window()
     except KeyboardInterrupt:
-        logger.info("\n\n🛑 Application interrupted by user")
+        print("\n🛑 Application interrupted by user")
     except Exception as e:
         logger.error(f"\n❌ Error: {e}")
     finally:
         # Cleanup
-        logger.info("Shutting down backend server...")
+        print("Shutting down...")
         if server_process.is_alive():
             server_process.terminate()
             server_process.join(timeout=5)
-        logger.info("✅ Application closed\n")
+        print("✅ Closed\n")
 
 
 if __name__ == "__main__":

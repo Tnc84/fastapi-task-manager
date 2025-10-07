@@ -16,7 +16,7 @@ if settings.DATABASE_URL.startswith("sqlite"):
 engine = create_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
-    echo=True,  # Set to False in production
+    echo=False,  # Disable SQL logging for cleaner output
     connect_args=connect_args,
     pool_size=5,  # PostgreSQL connection pool
     max_overflow=10

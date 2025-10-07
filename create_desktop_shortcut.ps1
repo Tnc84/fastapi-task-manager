@@ -10,18 +10,19 @@ $Shortcut.WorkingDirectory = "$ScriptDir"
 $Shortcut.Description = "Task Manager Desktop Application"
 
 # Set icon if it exists
-$IconPath = "$ScriptDir\app_icon.ico"
+$IconPath = "$ScriptDir\taskmanager.ico"
 if (Test-Path $IconPath) {
     $Shortcut.IconLocation = $IconPath
-    Write-Host "Using custom icon: $IconPath" -ForegroundColor Cyan
+    Write-Host "✅ Using custom icon: taskmanager.ico" -ForegroundColor Cyan
 } else {
+    Write-Host "⚠️  Custom icon not found. Run: python create_icon.py" -ForegroundColor Yellow
     # Use default Python icon as fallback
     try {
         $PythonPath = (Get-Command python).Source
         $Shortcut.IconLocation = $PythonPath
-        Write-Host "Using Python icon as fallback" -ForegroundColor Yellow
+        Write-Host "   Using Python icon as fallback" -ForegroundColor Yellow
     } catch {
-        Write-Host "No icon found, using default" -ForegroundColor Yellow
+        Write-Host "   Using default icon" -ForegroundColor Yellow
     }
 }
 

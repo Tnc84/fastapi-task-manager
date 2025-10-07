@@ -101,7 +101,15 @@ def create_native_window():
     
     logger.info("Creating native desktop window...")
     
-    # Create the window
+    # Check if custom icon exists
+    icon_path = Path(__file__).parent / "taskmanager.ico"
+    if not icon_path.exists():
+        logger.warning("⚠️  Custom icon not found. Run: python create_icon.py")
+        icon_path = None
+    else:
+        logger.info(f"✅ Using custom icon: {icon_path}")
+    
+    # Create the window (icon will be set in webview.start())
     window = webview.create_window(
         title='Task Manager',
         url='http://127.0.0.1:8000',
@@ -121,8 +129,11 @@ def create_native_window():
     logger.info("Close the window to exit the application")
     logger.info("=" * 50 + "\n")
     
-    # Start the GUI event loop (blocking)
-    webview.start()
+    # Start the GUI event loop (blocking) with icon
+    if icon_path:
+        webview.start(icon=str(icon_path))
+    else:
+        webview.start()
     
     logger.info("Desktop window closed. Shutting down...")
 

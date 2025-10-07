@@ -267,3 +267,7 @@ secrets/
 local/
 dev/
 development/
+
+# Frontend (if copied locally - original is at D:\Angular\task-manager-portal)
+frontend/
+node_modules/

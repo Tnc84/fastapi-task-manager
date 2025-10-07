@@ -16,10 +16,10 @@ from sqlalchemy.orm import sessionmaker
 from app.models.user import User
 from app.models.task import Task
 from app.core.security import get_password_hash
+from app.core.config import settings
 
-# Create database engine directly with SQLite
-DATABASE_URL = "sqlite:///./task_manager.db"
-engine = create_engine(DATABASE_URL, pool_pre_ping=True, echo=True)
+# Use the database URL from settings
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

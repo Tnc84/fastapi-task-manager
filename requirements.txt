@@ -13,3 +13,7 @@ bcrypt==4.0.1
 pytest==8.4.2
 pytest-asyncio==1.2.0
 httpx==0.28.1
+
+# Desktop Application Dependencies
+pywebview==5.3.1
+pythonnet==3.0.4

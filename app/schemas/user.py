@@ -14,6 +14,7 @@ class UserBase(BaseModel):
     username: str
     full_name: Optional[str] = None
     is_active: bool = True
+    is_superuser: bool = False
 
 
 class UserCreate(UserBase):
@@ -27,15 +28,16 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     full_name: Optional[str] = None
     is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = None
     password: Optional[str] = None
 
 
 class User(UserBase):
     """Schema for user response"""
     id: int
-    is_superuser: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
+    deleted_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True

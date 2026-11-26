@@ -12,8 +12,10 @@ class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
     is_completed: bool = False
+    status: str = "todo"  # todo | in_progress | done
     priority: str = "medium"
     due_date: Optional[datetime] = None
+    project_id: Optional[int] = None
 
 
 class TaskCreate(TaskBase):
@@ -26,8 +28,11 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     is_completed: Optional[bool] = None
+    status: Optional[str] = None
     priority: Optional[str] = None
     due_date: Optional[datetime] = None
+    owner_id: Optional[int] = None
+    project_id: Optional[int] = None
 
 
 class Task(TaskBase):
@@ -36,6 +41,7 @@ class Task(TaskBase):
     owner_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
+    deleted_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True

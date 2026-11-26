@@ -11,6 +11,9 @@ from fastapi.responses import FileResponse
 
 from app.api.v1.api import api_router
 from app.core.config import settings
+from app.core.db_migrate import ensure_schema
+
+ensure_schema()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

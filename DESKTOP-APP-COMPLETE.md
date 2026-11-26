@@ -219,8 +219,21 @@ pip install pywebview pythonnet
 
 - **`QUICKSTART-DESKTOP.md`** - Quick start (5 minutes)
 - **`README-DESKTOP.md`** - Full documentation
-- **`angular-integration-guide.md`** - Angular setup
+- **`angular-integration-guide.md`** - Angular setup + API client notes
+- **`CHANGELOG.md`** - Backend API changes (projects, comments, soft delete)
 - **`verify_setup.py`** - Setup verification script
+
+---
+
+## 🆕 Backend updates (2026-11-26)
+
+- Soft delete for tasks and users (`deleted_at`), admin-only deletes via `X-Actor-User-Id`
+- Projects API (`/api/v1/projects`) and task `project_id` filter
+- Task comments (`/api/v1/tasks/{id}/comments`)
+- Task `status` field; schema auto-sync on startup (`ensure_schema`)
+- CORS includes Vite preview port `4173`
+
+Details: **`CHANGELOG.md`**
 
 ---
 

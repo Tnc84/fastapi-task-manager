@@ -67,9 +67,9 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  // Tasks
-  getTasks(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/tasks`);
+  // Tasks (optional: project_id, include_deleted for admins)
+  getTasks(params?: { project_id?: number; include_deleted?: boolean }): Observable<any> {
+    return this.http.get(`${this.apiUrl}/tasks`, { params: params as any });
   }
 
   createTask(task: any): Observable<any> {
@@ -80,8 +80,27 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/tasks/${id}`, task);
   }
 
+  // Soft delete — requires admin header X-Actor-User-Id
   deleteTask(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/tasks/${id}`);
+  }
+
+  // Projects
+  getProjects(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/projects`);
+  }
+
+  createProject(project: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/projects`, project);
+  }
+
+  // Comments (nested under task)
+  getComments(taskId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/tasks/${taskId}/comments`);
+  }
+
+  createComment(taskId: number, body: { content: string; author_id: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tasks/${taskId}/comments`, body);
   }
 
   // Users
@@ -215,8 +234,16 @@ this.apiService.getTasks().subscribe(
 ### 8. Common Issues & Solutions
 
 **CORS Error:**
-- ✅ Already configured in FastAPI (ports 3000, 4200, 8080)
+- ✅ Already configured in FastAPI (ports 3000, 4200, 4173, 8000, 8080)
 - If you need more, update `app/core/config.py`
+
+**403 on delete / include_deleted:**
+- Soft delete and viewing deleted records require admin (`is_superuser`)
+- Send header `X-Actor-User-Id` with the admin user id
+
+**Tasks without project / status:**
+- Tasks support optional `project_id` and `status` (`todo` | `in_progress` | `done`)
+- Filter: `GET /api/v1/tasks?project_id=<id>`
 
 **404 on refresh:**
 - ✅ Fixed - FastAPI serves index.html for all non-API routes
@@ -276,6 +303,21 @@ Then run:
 ```bash
 python launch_desktop.py
 ```
+
+---
+
+### 11. API updates (2026-11-26)
+
+See **`CHANGELOG.md`** for full details. Frontend should account for:
+
+| Area | Notes |
+|------|--------|
+| Projects | `/api/v1/projects` CRUD |
+| Comments | `/api/v1/tasks/{id}/comments` CRUD |
+| Soft delete | Tasks/users use `deleted_at`; delete is admin-only |
+| Admin header | `X-Actor-User-Id` for delete and `include_deleted=true` |
+| Task fields | `status`, optional `project_id`, optional `deleted_at` |
+| User fields | `is_superuser`, optional `deleted_at` |
 
 ---
 

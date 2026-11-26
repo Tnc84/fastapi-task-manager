@@ -6,9 +6,10 @@ This is a native desktop application that combines your FastAPI backend with Ang
 
 - **Native Desktop Window** - Runs like a real desktop application (no browser UI)
 - **Single Click Launch** - Just double-click the icon
-- **Auto-Start Backend** - Backend server starts automatically
+- **Auto-Start Backend** - Backend server starts automatically (schema sync on startup)
 - **Clean Interface** - No address bar, tabs, or browser clutter
 - **Windows Optimized** - Built specifically for Windows 10/11
+- **API** - Projects, task comments, soft delete, task status / project filter (see `CHANGELOG.md`)
 
 ---
 
